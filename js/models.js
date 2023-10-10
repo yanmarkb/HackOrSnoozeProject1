@@ -1,16 +1,17 @@
 "use strict";
 
+//This line defines BASE_URL for the API that the application will iteract with.
 const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
 
 /******************************************************************************
  * Story: a single story in the system
  */
 
+//Defines story class.  Represetns a single story in the system and has several methods and properties for handling story data.
 class Story {
 	/** Make instance of Story from data object about story:
 	 *   - {storyId, title, author, url, username, createdAt}
 	 */
-
 	constructor({ storyId, title, author, url, username, createdAt }) {
 		this.storyId = storyId;
 		this.title = title;
@@ -21,7 +22,7 @@ class Story {
 	}
 
 	/** Parses hostname out of URL and returns it. */
-
+	//this method extracts the hostname from the stories URL and returns it.
 	getHostName() {
 		return new URL(this.url).host;
 	}
@@ -31,7 +32,9 @@ class Story {
  * List of Story instances: used by UI to show story lists in DOM.
  */
 
+//Defines the storylist class.  Represents a list of story instances and provides methods for interacting with this list.
 class StoryList {
+	//Takes an array of "stories" as its parameter and initializes the 'stories' property with it.
 	constructor(stories) {
 		this.stories = stories;
 	}
@@ -43,7 +46,7 @@ class StoryList {
 	 *  - makes a single StoryList instance out of that
 	 *  - returns the StoryList instance.
 	 */
-
+	//Fetches a list of stories from the API and return a "Storylist" instance containing those stories
 	static async getStories() {
 		// Note presence of `static` keyword: this indicates that getStories is
 		//  **not** an instance method. Rather, it is a method that is called on the
@@ -69,7 +72,7 @@ class StoryList {
 	 *
 	 * Returns the new Story instance
 	 */
-
+	//This method allows users to add a new storyto the list. It sends a request to the API to create a new story and then adds it to the stories array.
 	async addStory(user, { title, author, url }) {
 		const token = user.loginToken;
 		const response = await axios({
@@ -90,7 +93,7 @@ class StoryList {
 	 * - user: the current User instance
 	 * - storyId: the ID of the story you want to remove
 	 */
-
+	//This method allows a user to delete a story from the stories list. It sends a request to the API to delete the story and removes it from the 'stories' array.
 	async removeStory(user, storyId) {
 		const token = user.loginToken;
 		await axios({
@@ -112,11 +115,14 @@ class StoryList {
  * User: a user in the system (only used to represent the current user)
  */
 
+//Represents a user in the system and includes methods for user-related actions.
 class User {
 	/** Make user instance from obj of user data and a token:
 	 *   - {username, name, createdAt, favorites[], ownStories[]}
 	 *   - token
 	 */
+
+	//This constructor takes an object with user data and a'token' parameter to create a user instance. It initializes properties like 'useername', 'name', 'createdAt', 'favorites', 'ownStories', and 'loginToken'
 
 	constructor(
 		{ username, name, createdAt, favorites = [], ownStories = [] },
@@ -141,6 +147,7 @@ class User {
 	 * - name: the user's full name
 	 */
 
+	//Both signup and login methods allow users to register and login. They send requests to the API and create user instances if successful.
 	static async signup(username, password, name) {
 		const response = await axios({
 			url: `${BASE_URL}/signup`,
@@ -168,6 +175,7 @@ class User {
    * - password: an existing user's password
    */
 
+	//Both signup and login methods allow users to register and login. They send requests to the API and create user instances if successful.
 	static async login(username, password) {
 		const response = await axios({
 			url: `${BASE_URL}/login`,
@@ -192,6 +200,8 @@ class User {
 	/** When we already have credentials (token & username) for a user,
 	 *   we can log them in automatically. This function does that.
 	 */
+
+	//This method allows a user to add or remove stories from their list of favorites.
 
 	static async loginViaStoredCredentials(token, username) {
 		try {
@@ -223,6 +233,7 @@ class User {
 	 * - story: a Story instance to add to favorites
 	 */
 
+	//This method allows a user to add stories to their favorite list.
 	async addFavorite(story) {
 		this.favorites.push(story);
 		await this._addOrRemoveFavorite("add", story);
@@ -232,6 +243,7 @@ class User {
 	 * - story: the Story instance to remove from favorites
 	 */
 
+	//This method allows users to remove stories from their favorite list
 	async removeFavorite(story) {
 		this.favorites = this.favorites.filter((s) => s.storyId !== story.storyId);
 		await this._addOrRemoveFavorite("remove", story);
@@ -241,7 +253,7 @@ class User {
 	 *   - newState: "add" or "remove"
 	 *   - story: Story instance to make favorite / not favorite
 	 * */
-
+	//Updates API about stories list
 	async _addOrRemoveFavorite(newState, story) {
 		const method = newState === "add" ? "POST" : "DELETE";
 		const token = this.loginToken;
@@ -254,6 +266,7 @@ class User {
 
 	/** Return true/false if given Story instance is a favorite of this user. */
 
+	//This method checks if a specific story is marked as a favorite by the user.
 	isFavorite(story) {
 		return this.favorites.some((s) => s.storyId === story.storyId);
 	}

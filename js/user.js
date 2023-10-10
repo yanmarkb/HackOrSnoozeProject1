@@ -9,20 +9,26 @@ let currentUser;
 
 /** Handle login form submission. If login ok, sets up the user instance */
 
+//This function defines an asynchronous function called login that is triggered when a user submits a login form.
 async function login(evt) {
 	console.debug("login", evt);
+	//First is prevents default form submission behavior.
 	evt.preventDefault();
 
-	// grab the username and password
+	// Retrieves the username and password from the login form.
 	const username = $("#login-username").val();
 	const password = $("#login-password").val();
 
 	// User.login retrieves user info from API and returns User instance
 	// which we'll make the globally-available, logged-in user.
+
+	//Calls the user.login function with the username and password as arguments to retrieve user information from the API.
 	currentUser = await User.login(username, password);
 
+	//Once the user information is retrieved, it sets the currentUSer variable to the retrieves user instance and triggers a resrt on the login form.
 	$loginForm.trigger("reset");
 
+	//Finally, it saves the user's credentials in local storage and updates the UI on user login.
 	saveUserCredentialsInLocalStorage();
 	updateUIOnUserLogin();
 }
@@ -31,24 +37,30 @@ $loginForm.on("submit", login);
 
 /** Handle signup form submission. */
 
+//This function defines a asynchronous function called signup that is triggered when a user submits a form to sign up for an account.
 async function signup(evt) {
 	console.debug("signup", evt);
+	//Prevents default form submission behavior.
 	evt.preventDefault();
 
+	//Retrieves values for name, username, and password
 	const name = $("#signup-name").val();
 	const username = $("#signup-username").val();
 	const password = $("#signup-password").val();
 
 	// User.signup retrieves user info from API and returns User instance
 	// which we'll make the globally-available, logged-in user.
+
+	//Calls the User.signup function with these values. Retries user information from the API and truens a user instance, which is then assigned to the currentUser variable.
 	currentUser = await User.signup(username, password, name);
 
+	//Saves the user's credentals in local storage, updates the UI to reflect the user's login status and resets the form.
 	saveUserCredentialsInLocalStorage();
 	updateUIOnUserLogin();
 
 	$signupForm.trigger("reset");
 }
-
+//Event handler for signup.  Triggers when form is submitted.
 $signupForm.on("submit", signup);
 
 /** Handle click of logout button
@@ -56,12 +68,17 @@ $signupForm.on("submit", signup);
  * Remove their credentials from localStorage and refresh page
  */
 
+//This function defines logout that takes an event object as a parameter.
 function logout(evt) {
+	//When it is called it logs this message.
 	console.debug("logout", evt);
+	//Clears local storage
 	localStorage.clear();
+	//Reloads the page.
 	location.reload();
 }
 
+//Event handler for when log out is clicked.
 $navLogOut.on("click", logout);
 
 /******************************************************************************
@@ -72,6 +89,7 @@ $navLogOut.on("click", logout);
  * that user. This is meant to be called on page load, just once.
  */
 
+//Defines a asynchronous functin for checkForRememberedUser that checks if there are any stored crednetials in the brows's local storage.
 async function checkForRememberedUser() {
 	console.debug("checkForRememberedUser");
 	const token = localStorage.getItem("token");

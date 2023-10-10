@@ -1,9 +1,12 @@
+//This is a JS directive that enforces a stricter set of rules for writing JS. It helps catch common coding mistakes and prevents the use of potentially problematic features
 "use strict";
 
 // So we don't have to keep re-finding things on page, find DOM elements once:
 
+//This line selects the <body></body> element of the HTML doc using jQuery and stores it in a variable $body. The $ symbol is a prefix that holds jQuery objects.
 const $body = $("body");
 
+//Same as the above line but for different elements.
 const $storiesLoadingMsg = $("#stories-loading-msg");
 const $allStoriesList = $("#all-stories-list");
 const $favoritedStories = $("#favorited-stories");
